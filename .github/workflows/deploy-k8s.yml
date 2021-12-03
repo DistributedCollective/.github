@@ -41,9 +41,9 @@ jobs:
       - name: kubernets apply config
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: apply -f deployment.yaml -n ${{ env.KUBE_NAMESPACE }}
+          args: apply -f deployment.yaml -n ${{ inputs.KUBE_NAMESPACE }}
 
       - name: rollout
         uses: kodermax/kubectl-aws-eks@master
         with:
-          args: rollout restart deploy/sov-notification-service -n ${{ env.KUBE_NAMESPACE }}
+          args: rollout restart deploy/sov-notification-service -n ${{ inputs.KUBE_NAMESPACE }}
