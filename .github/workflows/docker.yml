@@ -7,6 +7,13 @@ on:
       event_name:
         required: true
         type: string
+    secrets:
+      DOCKER_USERNAME:
+        required: true
+        type: string
+      DOCKER_PASSWORD:
+        required: true
+        type: string
 
 env:
   REGISTRY: docker.io
