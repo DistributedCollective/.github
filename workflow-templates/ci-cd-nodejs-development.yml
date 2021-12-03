@@ -10,17 +10,18 @@ env:
 
 jobs:
   call-workflow-init:
-   uses: DistributedCollective/.github/.github/workflows/init.yml@main
+   uses: DistributedCollective/.github/.github/workflows/init.yml@master
    with:
-     branch: ${{ github.ref_name }}
+     ref: ${{ github.ref }}
+     base_ref: ${{ github.base_ref }}
   call-workflow-docker-build:
-    uses: DistributedCollective/.github/.github/workflows/docker.yml@main
+    uses: DistributedCollective/.github/.github/workflows/docker.yml@master
     with:
       IMAGE_NAME: ${{ env.IMAGE_NAME }}
       event_name: ${{ github.event_name }}
   call-workflow-k8s-deploy:
     needs: call-workflow-init
     if: github.event_name != 'pull_request'
-    uses: DistributedCollective/.github/.github/workflows/k8s-deploy.yml@main
+    uses: DistributedCollective/.github/.github/workflows/k8s-deploy.yml@master
     with:
       KUBE_NAMESPACE: ${{ needs.init.outputs.KUBE_NAMESPACE }}

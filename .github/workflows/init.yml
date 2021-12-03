@@ -1,7 +1,10 @@
 on:
   workflow_call:
     inputs:
-      branch:
+      ref:
+        required: true
+        type: string
+      base_ref:
         required: true
         type: string
     outputs:
@@ -19,10 +22,10 @@ jobs:
       - name: Set variables
         id: setvars
         run: |
-          if [[ "${{github.base_ref}}" == "main" || "${{github.ref}}" == "refs/heads/main" ]]; then
+          if [[ "${{ inputs.base_ref }}" == "main" || "${{ inputs.ref }}" == "refs/heads/main" || "${{ inputs.base_ref }}" == "master" || "${{ inputs.ref }}" == "refs/heads/master" ]]; then
             echo "::set-output name=namespace::prod"
           fi
 
-          if [[ "${{github.base_ref}}" == "development" || "${{github.ref}}" == "refs/heads/development" ]]; then
+          if [[ "${{ inputs.base_ref }}" == "development" || "${{ inputs.ref }}" == "refs/heads/development" ]]; then
             echo "::set-output name=namespace::test"
           fi
