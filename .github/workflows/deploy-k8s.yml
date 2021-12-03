@@ -7,13 +7,10 @@ on:
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
-        type: string
       AWS_SECRET_ACCESS_KEY:
         required: true
-        type: string
       AWS_SESSION_TOKEN: # temp
         required: true
-        type: string
 
 env:
   AWS_REGION: us-east-2
