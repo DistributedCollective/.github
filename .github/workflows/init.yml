@@ -1,0 +1,28 @@
+on:
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+    outputs:
+      KUBE_NAMESPACE:
+        description: "KUBE_NAMESPACE for your branch"
+        value: ${{ jobs.init.outputs.k8s_namespace }}
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    outputs:
+      k8s_namespace: ${{ steps.setvars.outputs.namespace }}
+
+    steps:
+      - name: Set variables
+        id: setvars
+        run: |
+          if [[ "${{github.base_ref}}" == "main" || "${{github.ref}}" == "refs/heads/main" ]]; then
+            echo "::set-output name=namespace::prod"
+          fi
+
+          if [[ "${{github.base_ref}}" == "development" || "${{github.ref}}" == "refs/heads/development" ]]; then
+            echo "::set-output name=namespace::test"
+          fi

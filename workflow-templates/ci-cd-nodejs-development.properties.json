@@ -1,0 +1,8 @@
+{
+    "name": "CI/CD NodeJS Development Workflow",
+    "description": "CI/CD workflow template for NodeJS services.",
+    "iconName": "ci-icon",
+    "categories": [
+        "nodejs"
+    ]
+}

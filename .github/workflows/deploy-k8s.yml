@@ -1,0 +1,41 @@
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+
+env:
+  AWS_REGION: us-east-2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: use awscli 
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: 2
+      
+      - run: aws --version 
+        shell: bash
+
+      - name: kubernets apply config
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: apply -f deployment.yaml -n ${{ env.KUBE_NAMESPACE }}
+
+      - name: rollout
+        uses: kodermax/kubectl-aws-eks@master
+        with:
+          args: rollout restart deploy/sov-notification-service -n ${{ env.KUBE_NAMESPACE }}

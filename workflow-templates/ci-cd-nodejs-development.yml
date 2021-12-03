@@ -1,0 +1,26 @@
+name: NodeJS CI
+
+on:
+  push:
+    branches: [ development, main ]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: sovryn/sovryn-notification
+
+jobs:
+  call-workflow-init:
+   uses: DistributedCollective/.github/.github/workflows/init.yml@main
+   with:
+     branch: ${{ github.ref_name }}
+  call-workflow-docker-build:
+    uses: DistributedCollective/.github/.github/workflows/docker.yml@main
+    with:
+      IMAGE_NAME: ${{ env.IMAGE_NAME }}
+      event_name: ${{ github.event_name }}
+  call-workflow-k8s-deploy:
+    needs: call-workflow-init
+    if: github.event_name != 'pull_request'
+    uses: DistributedCollective/.github/.github/workflows/k8s-deploy.yml@main
+    with:
+      KUBE_NAMESPACE: ${{ needs.init.outputs.KUBE_NAMESPACE }}
