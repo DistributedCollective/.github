@@ -23,9 +23,9 @@ jobs:
         id: setvars
         run: |
           if [[ "${{ inputs.base_ref }}" == "main" || "${{ inputs.ref }}" == "refs/heads/main" || "${{ inputs.base_ref }}" == "master" || "${{ inputs.ref }}" == "refs/heads/master" ]]; then
-            echo "::set-output name=namespace::prod"
+            echo "::set-output name=k8s_namespace::prod"
           fi
 
           if [[ "${{ inputs.base_ref }}" == "development" || "${{ inputs.ref }}" == "refs/heads/development" ]]; then
-            echo "::set-output name=namespace::test"
+            echo "::set-output name=k8s_namespace::test"
           fi
