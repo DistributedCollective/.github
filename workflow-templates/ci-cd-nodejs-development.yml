@@ -6,9 +6,17 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: sovryn/sovryn-notification
+  IMAGE_NAME: <> # needs to be defined for earch service
 
 jobs:
+  setenv: # workaround for Github Actions limitation of 'env' context (https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#limitations)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set variables
+        id: setvars
+        run: echo "::set-output name=IMAGE_NAME::${{ env.IMAGE_NAME }}"
+    outputs:
+      IMAGE_NAME: ${{ steps.setvars.outputs.IMAGE_NAME }}
   call-workflow-init:
    uses: DistributedCollective/.github/.github/workflows/init.yml@master
    with:
@@ -16,12 +24,20 @@ jobs:
      base_ref: ${{ github.base_ref }}
   call-workflow-docker-build:
     uses: DistributedCollective/.github/.github/workflows/docker.yml@master
+    needs: [setenv]
     with:
-      IMAGE_NAME: ${{ env.IMAGE_NAME }}
+      IMAGE_NAME: ${{ needs.setenv.outputs.IMAGE_NAME }}
       event_name: ${{ github.event_name }}
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   call-workflow-k8s-deploy:
-    needs: call-workflow-init
+    needs: [call-workflow-init, call-workflow-docker-build]
     if: github.event_name != 'pull_request'
-    uses: DistributedCollective/.github/.github/workflows/k8s-deploy.yml@master
+    uses: DistributedCollective/.github/.github/workflows/deploy-k8s.yml@master
     with:
-      KUBE_NAMESPACE: ${{ needs.init.outputs.KUBE_NAMESPACE }}
+      KUBE_NAMESPACE: ${{ needs.call-workflow-init.outputs.KUBE_NAMESPACE }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
