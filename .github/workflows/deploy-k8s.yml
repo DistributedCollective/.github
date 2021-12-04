@@ -41,7 +41,7 @@ jobs:
 
       - name: get token
         id: kubeconfig
-        run: echo "::set-output name=KUBECONFIG::'$(aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.K8S_CLUSTER_NAME }} --dry-run)'"
+        run: echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.K8S_CLUSTER_NAME }} --dry-run | base64 -w 0)"
         shell: bash
 
       - name: kubernets apply config
