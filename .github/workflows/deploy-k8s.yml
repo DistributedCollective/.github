@@ -41,9 +41,9 @@ jobs:
 
       - name: get token
         id: kubeconfig
-        run: echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.K8S_CLUSTER_NAME }} --dry-run)"
+        run: echo "::set-output name=KUBECONFIG::'$(aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.K8S_CLUSTER_NAME }} --dry-run)'"
         shell: bash
-        
+
       - name: kubernets apply config
         uses: kodermax/kubectl-aws-eks@master
         env:
