@@ -10,14 +10,22 @@ on:
 
     outputs:
       KUBE_NAMESPACE:
-        description: "KUBE_NAMESPACE for your branch"
         value: ${{ jobs.init.outputs.k8s_namespace }}
+      image_name:
+        value: ${{ jobs.init.outputs.image_name }}
+      registry:
+        value: ${{ jobs.init.outputs.registry }}
+      aws_region:
+        value: ${{ jobs.init.outputs.aws_region }}
+      k8s_cluster_name:
+        value: ${{ jobs.init.outputs.k8s_cluster_name }}
 
 jobs:
   init:
     runs-on: ubuntu-latest
     outputs:
       k8s_namespace: ${{ steps.setvars.outputs.k8s_namespace }}
+      image_name: ${{ steps.setvars.outputs.image_name }}
 
     steps:
       - name: Checkout repository
@@ -43,3 +51,7 @@ jobs:
               echo "::set-output name=k8s_namespace::test"
             fi
           fi
+          echo "::set-output name=image_name::${{ env.image_name }}"
+          echo "::set-output name=registry::${{ env.registry }}"
+          echo "::set-output name=aws_region::${{ env.aws_region }}"
+          echo "::set-output name=k8s_cluster_name::${{ env.k8s_cluster_name }}"

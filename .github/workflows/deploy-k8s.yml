@@ -4,6 +4,12 @@ on:
       KUBE_NAMESPACE:
         required: true
         type: string
+      aws_region:
+        required: true
+        type: string
+      k8s_cluster_name:
+        required: true
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -31,8 +37,6 @@ jobs:
              if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; then 
                echo "APP_SECRET_KEY${ITER}=$i" >> $GITHUB_ENV
                ITER=$(expr $ITER + 1)
-             else
-               echo "$i=$( cat .github/workflows/ci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
              fi; 
            done;
 
@@ -41,7 +45,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.aws_region }}
+          aws-region: ${{ inputs.aws_region }}
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # optional
 
       - name: use awscli 
@@ -54,7 +58,7 @@ jobs:
 
       - name: login to EKS
         id: kubeconfig
-        run: echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ env.aws_region }} update-kubeconfig --name ${{ env.k8s_cluster_name }} --dry-run | base64 -w 0)"
+        run: echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
         shell: bash
        
       - name: Generate k8s secret params
