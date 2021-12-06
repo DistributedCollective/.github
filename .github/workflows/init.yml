@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
            for i in `cat .github/workflows/ci-properties.json | jq -r 'keys[]'`; do
-               echo "$i=$( cat .github/workflows/ci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
+               echo "$i=$( cat .github/workflows/ci-properties.json | jq -r .$i)" >> $GITHUB_ENV
            done;
 
       - name: Set variables
