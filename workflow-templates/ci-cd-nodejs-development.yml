@@ -1,22 +1,11 @@
-name: NodeJS CI
+name: CI Template 01
 
 on:
   push:
-    branches: [ development, main ]
+    branches: [ rsk ]
   workflow_dispatch:
 
-env:
-  IMAGE_NAME: <> # needs to be defined for earch service
-
 jobs:
-  setenv: # workaround for Github Actions limitation of 'env' context (https://docs.github.com/en/actions/learn-github-actions/reusing-workflows#limitations)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set variables
-        id: setvars
-        run: echo "::set-output name=IMAGE_NAME::${{ env.IMAGE_NAME }}"
-    outputs:
-      IMAGE_NAME: ${{ steps.setvars.outputs.IMAGE_NAME }}
   call-workflow-init:
    uses: DistributedCollective/.github/.github/workflows/init.yml@master
    with:
@@ -24,7 +13,6 @@ jobs:
      base_ref: ${{ github.base_ref }}
   call-workflow-docker-build:
     uses: DistributedCollective/.github/.github/workflows/docker.yml@master
-    needs: [setenv]
     with:
       IMAGE_NAME: ${{ needs.setenv.outputs.IMAGE_NAME }}
       event_name: ${{ github.event_name }}
@@ -40,3 +28,4 @@ jobs:
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}

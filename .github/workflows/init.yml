@@ -7,6 +7,7 @@ on:
       base_ref:
         required: true
         type: string
+
     outputs:
       KUBE_NAMESPACE:
         description: "KUBE_NAMESPACE for your branch"
@@ -19,13 +20,27 @@ jobs:
       k8s_namespace: ${{ steps.setvars.outputs.k8s_namespace }}
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read repo properties
+        shell: bash
+        run: |
+           for i in `cat ci-properties.json | jq -r 'keys[]'`; do
+               echo "$i=$( cat ci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
+             fi;
+           done;
+
       - name: Set variables
         id: setvars
         run: |
-          if [[ "${{ inputs.base_ref }}" == "main" || "${{ inputs.ref }}" == "refs/heads/main" || "${{ inputs.base_ref }}" == "master" || "${{ inputs.ref }}" == "refs/heads/master" ]]; then
-            echo "::set-output name=k8s_namespace::prod"
+	  if [ -z "${{ env.prod_branch }}" ]; then
+            if [[ "${{ inputs.base_ref }}" == "${{ env.prod_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.prod_branch }}" || "${{ inputs.base_ref }}" == "${{ env.prod_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.prod_branch }}" ]]; then
+              echo "::set-output name=k8s_namespace::prod"
+            fi
           fi
-
-          if [[ "${{ inputs.base_ref }}" == "development" || "${{ inputs.ref }}" == "refs/heads/development" ]]; then
-            echo "::set-output name=k8s_namespace::test"
+          if [ -z "${{ env.dev_branch }}" ]; then
+            if [[ "${{ inputs.base_ref }}" == "${{ env.dev_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.dev_branch }}" ]]; then
+              echo "::set-output name=k8s_namespace::test"
+            fi
           fi
