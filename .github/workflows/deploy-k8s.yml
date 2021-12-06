@@ -27,12 +27,12 @@ jobs:
         shell: bash
         run: |
            ITER=0;
-           for i in `cat ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
-             if [[ $(cat ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; then 
+           for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
+             if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; then 
                echo "APP_SECRET_KEY${ITER}=$i" >> $GITHUB_ENV
                ITER=$(expr $ITER + 1)
              else
-               echo "$i=$( cat ci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
+               echo "$i=$( cat .github/workflows/ci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
              fi; 
            done;
 
@@ -62,22 +62,22 @@ jobs:
         run: |
            ITER=0;
            tmp=$(mktemp);
-           for i in `cat ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
-             if [[ $(cat ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; 
+           for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
+             if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; 
                if [[ "$ITER" == 0 ]]; then
-                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY0] }}" '.APP_ENV_VARS[$key] = $value' ci-properties.json > "$tmp" && mv "$tmp" ci-properties.json
+                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY0] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
                fi
                if [[ "$ITER" == 1 ]]; then
-                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY1] }}" '.APP_ENV_VARS[$key] = $value' ci-properties.json > "$tmp" && mv "$tmp" ci-properties.json
+                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY1] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
                fi
                if [[ "$ITER" == 2 ]]; then
-                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY2] }}" '.APP_ENV_VARS[$key] = $value' ci-properties.json > "$tmp" && mv "$tmp" ci-properties.json
+                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY2] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
                fi
                if [[ "$ITER" == 3 ]]; then
-                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY3] }}" '.APP_ENV_VARS[$key] = $value' ci-properties.json > "$tmp" && mv "$tmp" ci-properties.json
+                 jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY3] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
                fi
              fi;
@@ -87,7 +87,7 @@ jobs:
         id: genparams
         shell: bash
         run: |
-            for i in `cat ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do params="${params} --from-literal=$i=$(cat ci-properties.json | jq -r .APP_ENV_VARS.$i)"; done
+            for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do params="${params} --from-literal=$i=$(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i)"; done
             echo "::set-output name=k8sparams::$params"
             echo "::add-mask::$params"
 

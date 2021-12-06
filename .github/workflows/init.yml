@@ -26,9 +26,8 @@ jobs:
       - name: Read repo properties
         shell: bash
         run: |
-           for i in `cat ci-properties.json | jq -r 'keys[]'`; do
-               echo "$i=$( cat ci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
-             fi;
+           for i in `cat .github/workflows/ci-properties.json | jq -r 'keys[]'`; do
+               echo "$i=$( cat .github/workflowsci-properties.json | jq -r '.$i')" >> $GITHUB_ENV
            done;
 
       - name: Set variables
