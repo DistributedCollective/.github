@@ -108,7 +108,7 @@ jobs:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           # RELEASE_IMAGE: ${{ steps.meta.outputs.tags }}
         with:
-          args: create secret generic ${{ inputs.app_name }} ${{ steps.genparams.outputs.k8sparams }}
+          args: create secret generic ${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }} ${{ steps.genparams.outputs.k8sparams }}
 
       - name: kubernets apply config
         uses: kodermax/kubectl-aws-eks@master
