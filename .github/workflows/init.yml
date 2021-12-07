@@ -31,6 +31,7 @@ jobs:
       registry: ${{ steps.setvars.outputs.registry }}
       aws_region: ${{ steps.setvars.outputs.aws_region }}
       k8s_cluster_name: ${{ steps.setvars.outputs.k8s_cluster_name }}
+      app_name: ${{ steps.setvars.outputs.app_name }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
