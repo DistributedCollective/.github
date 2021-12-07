@@ -19,6 +19,8 @@ on:
         value: ${{ jobs.init.outputs.aws_region }}
       k8s_cluster_name:
         value: ${{ jobs.init.outputs.k8s_cluster_name }}
+      app_name:
+        value: ${{ jobs.init.outputs.app_name }}
 
 jobs:
   init:
@@ -59,3 +61,4 @@ jobs:
           echo "::set-output name=registry::${{ env.registry }}"
           echo "::set-output name=aws_region::${{ env.aws_region }}"
           echo "::set-output name=k8s_cluster_name::${{ env.k8s_cluster_name }}"
+          echo "::set-output name=app_name::${{ env.app_name }}"
