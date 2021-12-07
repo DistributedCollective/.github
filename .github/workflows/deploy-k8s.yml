@@ -67,22 +67,26 @@ jobs:
            ITER=0;
            tmp=$(mktemp);
            for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
-             if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; 
+             if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; then
                if [[ "$ITER" == 0 ]]; then
                  jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY0] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
+                 continue
                fi
                if [[ "$ITER" == 1 ]]; then
                  jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY1] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
+                 continue
                fi
                if [[ "$ITER" == 2 ]]; then
                  jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY2] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
+                 continue
                fi
                if [[ "$ITER" == 3 ]]; then
                  jq --arg key "$i" --arg value "${{ secrets[env.APP_SECRET_KEY3] }}" '.APP_ENV_VARS[$key] = $value' .github/workflows/ci-properties.json > "$tmp" && mv "$tmp" .github/workflows/ci-properties.json
                  ITER=$(expr $ITER + 1)
+                 continue
                fi
              fi;
            done;
