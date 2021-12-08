@@ -49,7 +49,7 @@ jobs:
         id: setvars
         run: |
           if [[ "${{ inputs.base_ref }}" == "${{ env.prod_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.prod_branch }}" ]]; then
-            echo "::set-output name=k8s_namespace::prod"
+            echo "::set-output name=k8s_namespace::production"
           fi
           if [[ "${{ inputs.base_ref }}" == "${{ env.dev_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.dev_branch }}" ]]; then
             echo "::set-output name=k8s_namespace::test"
