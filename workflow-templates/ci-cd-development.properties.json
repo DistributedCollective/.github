@@ -4,6 +4,7 @@
     "iconName": "ci-icon",
     "categories": [
         "nodejs",
-        "rust"
+        "rust",
+        "python"
     ]
 }
