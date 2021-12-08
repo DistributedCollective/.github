@@ -84,4 +84,4 @@ jobs:
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
         with:
-          args: rollout restart deploy/sov-notification-service -n ${{ inputs.KUBE_NAMESPACE }}
+          args: rollout restart deploy/${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }}
