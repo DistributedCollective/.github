@@ -51,6 +51,7 @@ jobs:
           if [[ "${{ inputs.base_ref }}" == "${{ env.prod_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.prod_branch }}" ]]; then
             echo "::set-output name=k8s_namespace::prod"
           fi
+          if [[ "${{ inputs.base_ref }}" == "${{ env.dev_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.dev_branch }}" ]]; then
             echo "::set-output name=k8s_namespace::test"
           fi
           echo "::set-output name=image_name::${{ env.image_name }}"
