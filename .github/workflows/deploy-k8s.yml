@@ -31,18 +31,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Read app properties
-        id: gensecretenvs
-        shell: bash
-        run: |
-           ITER=0;
-           for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
-             if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; then 
-               echo "APP_SECRET_KEY${ITER}=$i" >> $GITHUB_ENV
-               ITER=$(expr $ITER + 1)
-             fi; 
-           done;
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -66,9 +54,22 @@ jobs:
           echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
         shell: bash
        
+      - name: Read app properties
+        id: gensecretenvs
+        shell: bash
+        run: |
+           ITER=0;
+           for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
+             if [[ $(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i) = "" ]]; then 
+               echo "APP_SECRET_KEY${ITER}=$i" >> $GITHUB_ENV
+               ITER=$(expr $ITER + 1)
+             fi; 
+           done;
+
       - name: Generate k8s secret params
         shell: bash
         run: |
+           printenv | grep APP_
            ITER=0;
            tmp=$(mktemp);
            for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do 
@@ -110,7 +111,7 @@ jobs:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           # RELEASE_IMAGE: ${{ steps.meta.outputs.tags }}
         with:
-          args: create secret generic ${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }} ${{ steps.genparams.outputs.k8sparams }}
+          args: create secret generic ${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }} ${{ steps.genparams.outputs.k8sparams }} --save-config --dry-run=client -o yaml | kubectl apply -f -
 
       - name: kubernets apply config
         uses: kodermax/kubectl-aws-eks@master
