@@ -23,23 +23,12 @@ on:
       
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
   deploy:
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       packages: write
-    needs:
-      - prepare
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -80,7 +69,6 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
-          # RELEASE_IMAGE: ${{ steps.meta.outputs.tags }}
         with:
           args: create secret generic ${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }} ${{ steps.genparams.outputs.k8sparams }} --save-config --dry-run=client -o yaml | kubectl apply -f -
 
@@ -88,7 +76,6 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
-          # RELEASE_IMAGE: ${{ steps.meta.outputs.tags }}
         with:
           args: apply -f deployment.yaml -n ${{ inputs.KUBE_NAMESPACE }}
 
@@ -96,6 +83,5 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
-          # RELEASE_IMAGE: ${{ steps.meta.outputs.tags }}
         with:
           args: rollout restart deploy/sov-notification-service -n ${{ inputs.KUBE_NAMESPACE }}

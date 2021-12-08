@@ -1,8 +1,9 @@
 {
-    "name": "CI/CD NodeJS Development Workflow",
-    "description": "CI/CD workflow template for NodeJS services.",
+    "name": "CI/CD Sovryn Development Workflow",
+    "description": "CI/CD workflow template for Sovryn services.",
     "iconName": "ci-icon",
     "categories": [
-        "nodejs"
+        "nodejs",
+        "rust"
     ]
 }
