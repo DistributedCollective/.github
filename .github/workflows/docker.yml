@@ -54,7 +54,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
-          file: ${{ inputs.dockerfile_path }}
+          file: ${{ inputs.dockerfile_path }}/Dockerfile
           push: ${{ inputs.event_name != 'pull_request' }}
           tags: ${{ inputs.registry }}/${{ inputs.IMAGE_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
