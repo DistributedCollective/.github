@@ -10,6 +10,9 @@ on:
       registry:
         required: true
         type: string
+      dockerfile_path:
+        required: true
+        type: string
     secrets:
       DOCKER_USERNAME:
         required: true
@@ -50,7 +53,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: .
+          context: ${{ inputs.dockerfile_path }}
           push: ${{ inputs.event_name != 'pull_request' }}
           tags: ${{ inputs.registry }}/${{ inputs.IMAGE_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
