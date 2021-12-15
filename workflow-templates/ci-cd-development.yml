@@ -18,6 +18,7 @@ jobs:
       IMAGE_NAME: ${{ needs.call-workflow-init.outputs.image_name }}
       event_name: ${{ github.event_name }}
       registry: ${{ needs.call-workflow-init.outputs.registry }}
+      dockerfile_path:  ${{ needs.call-workflow-init.outputs.dockerfile_path }}
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
