@@ -5,20 +5,26 @@ https://docs.github.com/en/actions/learn-github-actions/creating-workflow-templa
 Github Workflow Template:
 https://github.com/DistributedCollective/.github/blob/master/workflow-templates/ci-cd-development.yml
 
-Template use several reusable workflows, namely:
-init.yml (generate workflow variables from ci-properties.json)
-docker.yml (build and push docker image to registry)
-deploy-k8s.yml (login and deploy application to EKS)
+# Template use several reusable workflows, namely:
 
-Required repo/org secrets:
-# IAM credentials with access to EKS cluster("cluster_name" propertie in ci-properties.json) and 'production' and 'test' namespaces
+1. init.yml (generate workflow variables from ci-properties.json)
+2. docker.yml (build and push docker image to registry)
+3. deploy-k8s.yml (login and deploy application to EKS)
+
+# Required repo/org secrets:
+IAM credentials with access to EKS cluster("cluster_name" propertie in ci-properties.json) and 'production' and 'test' namespaces
+
 AWS_ACCESS_KEY_ID
+
 AWS_SECRET_ACCESS_KEY
+
 # Credentials for docker registry ("registry" propertie in ci-properties.json)
-DOCKER_USERNAME 
+
+DOCKER_USERNAME
+
 DOCKER_PASSWORD
 
-How to:
+# How to:
 1. Ensure secrets in repo/org (see #Required repo/org secrets)
 2. Push workflow template to repo and define 'branches: []' parameter with branches which should support CI workflow
 3. Create deployment.yaml in root of repository
