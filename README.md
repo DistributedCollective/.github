@@ -18,7 +18,7 @@ AWS_ACCESS_KEY_ID
 
 AWS_SECRET_ACCESS_KEY
 
-# Credentials for docker registry ("registry" propertie in ci-properties.json)
+# Credentials for docker registry ("registry" property in ci-properties.json)
 
 DOCKER_USERNAME
 
@@ -29,6 +29,7 @@ DOCKER_PASSWORD
 2. Push workflow template to repo and define 'branches: []' parameter with branches which should support CI workflow
 3. Create deployment.yaml in root of repository
 4. Add ci-properties.json file to .github/workflow/ci-properties.json
+```
 {
   "app_name": "safe-transaction-service", #  name of k8s deployment etc
   "aws_region": "us-east-2", # AWS region for aws login command and auth to EKS
@@ -45,4 +46,5 @@ DOCKER_PASSWORD
     "ETH_INTERNAL_NO_FILTER": "1"
   }
 }
+```
 5. Create k8s secret for this application if necessary (name of the secret must be defined in deployment.yaml) 
