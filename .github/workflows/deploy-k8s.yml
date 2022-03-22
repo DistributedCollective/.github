@@ -63,7 +63,7 @@ jobs:
             cat .github/workflows/ci-properties.json
             for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do params="${params} --from-literal=$i=$(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i)"; done
             echo "ENV VARS from ci-properties.json: $params"
-            echo '::set-output name=k8sparams::$params'
+            echo "::set-output name=k8sparams::$params"
        
       - name: print k8sparams
         id: print
