@@ -55,7 +55,7 @@ jobs:
           echo "::add-mask::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
           echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
         shell: bash
-       
+
       - name: Generate k8s secret params
         id: genparams
         shell: bash
@@ -63,7 +63,11 @@ jobs:
             cat .github/workflows/ci-properties.json
             for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]'`; do params="${params} --from-literal=$i=$(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i)"; done
             echo "::set-output name=k8sparams::$params"
-            echo "::add-mask::$params"
+       
+      - name: print k8sparams
+        id: print
+        run: | 
+          echo "${{ steps.genparams.outputs.k8sparams }}"
 
       - name: Create kubernetes secret with service parameters
         uses: kodermax/kubectl-aws-eks@master
