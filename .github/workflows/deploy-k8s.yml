@@ -69,6 +69,8 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
         with:
           args: create secret generic ${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }} ${{ steps.genparams.outputs.k8sparams }} --save-config --dry-run=client -o yaml | kubectl apply -f -
 
@@ -76,6 +78,8 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
         with:
           args: apply -f deployment.yaml -n ${{ inputs.KUBE_NAMESPACE }}
 
@@ -83,5 +87,7 @@ jobs:
         uses: kodermax/kubectl-aws-eks@master
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
         with:
           args: rollout restart deploy/${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }}
