@@ -45,8 +45,8 @@ jobs:
         shell: bash
         run: |
            for i in `cat .github/workflows/ci-properties.json | jq -r 'keys[]'`; do
-               if [[ $i != "APP_ENV_VARS" && $i != "DEV_ENV_VARS" && $i != "PROD_ENV_VARS"]]; then
-                 echo "$i=$( cat .github/workflows/ci-properties.json | jq -r .$i)" >> $GITHUB_ENV
+               if [[ $i != "APP_ENV_VARS" & $i != "DEV_ENV_VARS" & $i != "PROD_ENV_VARS"]]; then
+                   echo "$i=$( cat .github/workflows/ci-properties.json | jq -r .$i)" >> $GITHUB_ENV
                fi
            done;
 
