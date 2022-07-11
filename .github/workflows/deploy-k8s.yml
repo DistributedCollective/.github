@@ -65,7 +65,8 @@ jobs:
         run: |
             cat .github/workflows/ci-properties.json
             for i in `cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS | jq -r 'keys[]' || true`; do params="${params} --from-literal=$i=$(cat .github/workflows/ci-properties.json | jq -r .APP_ENV_VARS.$i)"; done
-            for i in `cat .github/workflows/ci-properties.json | jq -r .${{inputs.ci_env}}_ENV_VARS | jq -r 'keys[]' || true`; do params="${params} --from-literal=$i=$(cat .github/workflows/ci-properties.json | jq -r .${{inputs.ci_env}}_ENV_VARS.$i)"; done
+            echo "result: `cat .github/workflows/ci-properties.json | jq -r .${{ inputs.ci_env }}_ENV_VARS`"
+            for i in `cat .github/workflows/ci-properties.json | jq -r .${{ inputs.ci_env }}_ENV_VARS | jq -r 'keys[]' || true`; do params="${params} --from-literal=$i=$(cat .github/workflows/ci-properties.json | jq -r .${{ inputs.ci_env }}_ENV_VARS.$i)"; done
             echo "ENV VARS from ci-properties.json: $params"
             echo "::set-output name=k8sparams::$params"
        
