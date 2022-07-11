@@ -11,6 +11,8 @@ on:
     outputs:
       KUBE_NAMESPACE:
         value: ${{ jobs.init.outputs.k8s_namespace }}
+      ci_env:
+        value: ${{ jobs.init.outputs.ci_env }}
       image_name:
         value: ${{ jobs.init.outputs.image_name }}
       registry:
@@ -53,9 +55,11 @@ jobs:
         run: |
           if [[ "${{ inputs.base_ref }}" == "${{ env.prod_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.prod_branch }}" ]]; then
             echo "::set-output name=k8s_namespace::production"
+            echo "::set-output name=ci_env::PROD"
           fi
           if [[ "${{ inputs.base_ref }}" == "${{ env.dev_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.dev_branch }}" ]]; then
             echo "::set-output name=k8s_namespace::test"
+            echo "::set-output name=ci_env::DEV"
           fi
           echo "::set-output name=image_name::${{ env.image_name }}"
           echo "::set-output name=registry::${{ env.registry }}"
