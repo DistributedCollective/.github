@@ -31,6 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       k8s_namespace: ${{ steps.setvars.outputs.k8s_namespace }}
+      ci_env: ${{ steps.setvars.outputs.ci_env }}
       image_name: ${{ steps.setvars.outputs.image_name }}
       registry: ${{ steps.setvars.outputs.registry }}
       aws_region: ${{ steps.setvars.outputs.aws_region }}
