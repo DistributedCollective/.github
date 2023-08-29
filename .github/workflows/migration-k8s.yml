@@ -1,0 +1,80 @@
+on:
+  workflow_call:
+    inputs:
+      IMAGE_NAME:
+        required: true
+        type: string
+      KUBE_NAMESPACE:
+        required: true
+        type: string
+      k8s_cluster_name:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_SESSION_TOKEN:
+        required: false
+      
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws_region }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # optional
+
+      - name: use awscli 
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: 2
+      
+      - run: aws --version 
+        shell: bash
+
+      - name: login to EKS
+        id: kubeconfig
+        run: | 
+          echo "::add-mask::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
+          echo "::set-output name=KUBECONFIG::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
+        shell: bash
+
+      - name: Generate k8s secret params
+        shell: bash
+        run: |
+            sed -i 's|image: ${{ inputs.IMAGE_NAME }}|image: ${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' migration.yaml
+
+      - name: kubernets run migration
+        uses: kodermax/kubectl-aws-eks@master
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: apply -f migration.yaml -n ${{ inputs.KUBE_NAMESPACE }}
+
+      - name: kubernets wair for migration to end
+        uses: kodermax/kubectl-aws-eks@master
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: wait --for=condition=complete job/${{ inputs.app_name }}-migration -n ${{ inputs.KUBE_NAMESPACE }}
