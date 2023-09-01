@@ -103,8 +103,10 @@ jobs:
             echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}" >> $GITHUB_ENV
           elif [[ "${{ needs.login-to-amazon-ecr-public.result }}" == "success" ]]; then
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-public.outputs.registry }}" >> $GITHUB_ENV
-            echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-public.outputs.docker_username }}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}" >> $GITHUB_ENV
+            DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-public.outputs.docker_username }}
+            echo "::add-mask::$DOCKER_USERNAME" >> $GITHUB_ENV
+            DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}
+            echo "::add-mask::$DOCKER_PASSWORD" >> $GITHUB_ENV
           fi
 
       - name: Login to registry ${{ env.REGISTRY }}
@@ -117,7 +119,7 @@ jobs:
           ecr: false
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ${{ inputs.dockerfile_path }}/Dockerfile
