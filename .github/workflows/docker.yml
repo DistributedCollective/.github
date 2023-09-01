@@ -100,7 +100,6 @@ jobs:
           PASSWORD_FROM_OUTPUT1: ${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}
           PASSWORD_FROM_OUTPUT2: ${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}
         run: |
-        run: |
           if [[ "${{ needs.login-to-amazon-ecr-private.result }}" == "success" ]]; then
             echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-private.outputs.docker_username }}" >> $GITHUB_ENV
             echo "::add-mask::$PASSWORD_FROM_OUTPUT1"
