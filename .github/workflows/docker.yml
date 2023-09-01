@@ -95,17 +95,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws_region }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # optional
+          mask-aws-account-id: 'no'
+
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
           if [[ "${{ needs.login-to-amazon-ecr-private.result }}" == "success" ]]; then
-            echo "::add-mask::${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}"
-            echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-private.outputs.docker_username }}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}" >> $GITHUB_ENV
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-private.outputs.registry }}" >> $GITHUB_ENV
           elif [[ "${{ needs.login-to-amazon-ecr-public.result }}" == "success" ]]; then
-            echo "::add-mask::${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}"
-            echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-public.outputs.docker_username }}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}" >> $GITHUB_ENV
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-public.outputs.registry }}" >> $GITHUB_ENV
           fi
       - name: Login to registry ${{ env.REGISTRY }}
@@ -113,9 +116,6 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD }}
-          ecr: false
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
