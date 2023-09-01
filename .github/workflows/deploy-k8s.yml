@@ -91,6 +91,8 @@ jobs:
         shell: bash
         run: |
             sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' deployment.yaml
+            [ -f migration.yaml ] && sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' migration.yaml
+
 
       - name: kubernets apply config
         uses: kodermax/kubectl-aws-eks@master
