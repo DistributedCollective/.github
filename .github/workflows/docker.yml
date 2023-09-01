@@ -16,11 +16,6 @@ on:
       private_registry:
         required: false
         type: string
-    secrets:
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD:
-        required: true
 
 jobs:
   login-to-amazon-ecr-private:
