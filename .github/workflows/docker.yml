@@ -16,6 +16,9 @@ on:
       private_registry:
         required: false
         type: string
+      aws_region:
+        required: true
+        type: string
 
 jobs:
   login-to-amazon-ecr-private:
@@ -96,7 +99,7 @@ jobs:
             echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}" >> $GITHUB_ENV
           fi
 
-      - name: Login to registry ${{ inputs.registry }}
+      - name: Login to registry ${{ env.REGISTRY }}
         if: inputs.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
