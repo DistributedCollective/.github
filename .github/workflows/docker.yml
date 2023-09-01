@@ -99,8 +99,10 @@ jobs:
         run: |
           if [[ "${{ needs.login-to-amazon-ecr-private.result }}" == "success" ]]; then
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-private.outputs.registry }}" >> $GITHUB_ENV
-            echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-private.outputs.docker_username }}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}" >> $GITHUB_ENV
+            DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-private.outputs.docker_username }}
+            echo "::add-mask::$DOCKER_USERNAME" >> $GITHUB_ENV
+            DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}
+            echo "::add-mask::$DOCKER_PASSWORD" >> $GITHUB_ENV
           elif [[ "${{ needs.login-to-amazon-ecr-public.result }}" == "success" ]]; then
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-public.outputs.registry }}" >> $GITHUB_ENV
             DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-public.outputs.docker_username }}
