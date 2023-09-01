@@ -47,7 +47,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          mask-password: 'true'
+          mask-password: 'false'
           registry-type: private
     outputs:
       registry: ${{ steps.login-ecr.outputs.registry }}
@@ -72,7 +72,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          mask-password: 'true'
+          mask-password: 'false'
           registry-type: public
     outputs:
       registry: ${{ steps.login-ecr.outputs.registry }}
