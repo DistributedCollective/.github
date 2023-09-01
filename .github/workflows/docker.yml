@@ -46,11 +46,11 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # optional
           mask-aws-account-id: 'no'
 
-      - name: Login to registry ${{ env.REGISTRY }}
+      - name: Login to registry ${{ inputs.registry }}
         if: inputs.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ inputs.registry }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
@@ -58,4 +58,4 @@ jobs:
           context: .
           file: ${{ inputs.dockerfile_path }}/Dockerfile
           push: ${{ inputs.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}
+          tags: ${{ inputs.registry }}/${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}
