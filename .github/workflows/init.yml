@@ -70,5 +70,5 @@ jobs:
           echo "::set-output name=aws_region::${{ env.aws_region }}"
           echo "::set-output name=k8s_cluster_name::${{ env.k8s_cluster_name }}"
           echo "::set-output name=dockerfile_path::${{ env.dockerfile_path }}"
-          echo "::set-output name=dockerfile_path::${{ env.private_registry }}"
+          echo "::set-output name=private_registry::${{ env.private_registry }}"
           echo "::set-output name=app_name::${{ env.app_name }}"
