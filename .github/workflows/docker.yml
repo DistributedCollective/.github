@@ -96,19 +96,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build, tag, and push docker image to Amazon ECR Public
-        env:
-          PASSWORD_FROM_OUTPUT1: ${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}
-          PASSWORD_FROM_OUTPUT2: ${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}
         run: |
           if [[ "${{ needs.login-to-amazon-ecr-private.result }}" == "success" ]]; then
+            echo "::add-mask::${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}"
             echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-private.outputs.docker_username }}" >> $GITHUB_ENV
-            echo "::add-mask::$PASSWORD_FROM_OUTPUT1"
-            echo "DOCKER_PASSWORD=$PASSWORD_FROM_OUTPUT1" >> $GITHUB_ENV
+            echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-private.outputs.docker_password }}" >> $GITHUB_ENV
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-private.outputs.registry }}" >> $GITHUB_ENV
           elif [[ "${{ needs.login-to-amazon-ecr-public.result }}" == "success" ]]; then
+            echo "::add-mask::${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}"
             echo "DOCKER_USERNAME=${{ needs.login-to-amazon-ecr-public.outputs.docker_username }}" >> $GITHUB_ENV
-            echo "::add-mask::$PASSWORD_FROM_OUTPUT2"
-            echo "DOCKER_PASSWORD=$PASSWORD_FROM_OUTPUT2" >> $GITHUB_ENV
+            echo "DOCKER_PASSWORD=${{ needs.login-to-amazon-ecr-public.outputs.docker_password }}" >> $GITHUB_ENV
             echo "REGISTRY=${{ needs.login-to-amazon-ecr-public.outputs.registry }}" >> $GITHUB_ENV
           fi
       - name: Login to registry ${{ env.REGISTRY }}
