@@ -51,8 +51,8 @@ jobs:
           registry-type: private
     outputs:
       registry: ${{ steps.login-ecr.outputs.registry }}
-      docker_username: ${{ steps.login-ecr.outputs.docker_username_768438872063_dkr_ecr_us_east_2_amazonaws_com }}
-      docker_password: ${{ steps.login-ecr.outputs.docker_password_768438872063_dkr_ecr_us_east_2_amazonaws_com }}
+      docker_username: ${{ steps.login-ecr.outputs.docker_username_768438872063_dkr_ecr_us_east_1_amazonaws_com }}
+      docker_password: ${{ steps.login-ecr.outputs.docker_password_768438872063_dkr_ecr_us_east_1_amazonaws_com }}
   login-to-amazon-ecr-public:
     if: inputs.private_registry == ''
     runs-on: ubuntu-latest
