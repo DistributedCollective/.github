@@ -25,8 +25,6 @@ on:
         value: ${{ jobs.init.outputs.app_name }}
       dockerfile_path:
         value: ${{ jobs.init.outputs.dockerfile_path }}
-      private_registry: 
-        value: ${{ jobs.init.outputs.private_registry }}
 
 jobs:
   init:
@@ -40,7 +38,6 @@ jobs:
       k8s_cluster_name: ${{ steps.setvars.outputs.k8s_cluster_name }}
       app_name: ${{ steps.setvars.outputs.app_name }}
       dockerfile_path: ${{ steps.setvars.outputs.dockerfile_path }}
-      private_registry: ${{ steps.setvars.outputs.private_registry }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -70,5 +67,4 @@ jobs:
           echo "::set-output name=aws_region::${{ env.aws_region }}"
           echo "::set-output name=k8s_cluster_name::${{ env.k8s_cluster_name }}"
           echo "::set-output name=dockerfile_path::${{ env.dockerfile_path }}"
-          echo "::set-output name=private_registry::${{ env.private_registry }}"
           echo "::set-output name=app_name::${{ env.app_name }}"
