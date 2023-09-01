@@ -70,12 +70,12 @@ jobs:
       docker_password: ${{ steps.login-ecr.outputs.docker_password_public_ecr_aws }}
   build:
     needs: [login-to-amazon-ecr-private, login-to-amazon-ecr-public]
-    if: |
-    always() &&
-    (
-      needs.login-to-amazon-ecr-private.result == 'success' ||
-      needs.login-to-amazon-ecr-public.result == 'success'
-    )
+    if: >
+      always() &&
+      (
+        needs.login-to-amazon-ecr-private.result == 'success' ||
+        needs.login-to-amazon-ecr-public.result == 'success'
+      )
     runs-on: ubuntu-latest
     permissions:
       contents: read
