@@ -85,7 +85,7 @@ jobs:
       - name: Generate k8s secret params
         shell: bash
         run: |
-            sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' migration.yaml
+            sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}Migration|' migration.yaml
 
       - name: kubernets run migration
         uses: kodermax/kubectl-aws-eks@master
