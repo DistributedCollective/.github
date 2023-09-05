@@ -65,7 +65,7 @@ jobs:
           context: .
           file: ${{ inputs.dockerfile_path }}/Dockerfile-dev
           push: ${{ inputs.event_name != 'pull_request' }}
-          tags: ${{ inputs.registry }}/${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}
+          tags: ${{ inputs.registry }}/${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}Migration
 
       - name: use awscli 
         uses: unfor19/install-aws-cli-action@master
