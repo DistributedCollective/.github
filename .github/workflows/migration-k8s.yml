@@ -104,3 +104,12 @@ jobs:
           IAM_VERSION: "0.5.6"
         with:
           args: wait --for=condition=complete job/${{ inputs.app_name }}-migration -n ${{ inputs.KUBE_NAMESPACE }}
+
+      - name: kubernets wair for migration to end
+        uses: kodermax/kubectl-aws-eks@master
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: delete job ${{ inputs.app_name }}-migration -n ${{ inputs.KUBE_NAMESPACE }}
