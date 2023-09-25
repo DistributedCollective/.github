@@ -62,9 +62,9 @@ jobs:
             echo "k8s_namespace=test" >> $GITHUB_OUTPUT
             echo "ci_env=DEV" >> $GITHUB_OUTPUT
           fi
-          echo "image_name::${{ env.image_name }}" >> $GITHUB_OUTPUT
-          echo "registry::${{ env.registry }}" >> $GITHUB_OUTPUT
-          echo "aws_region::${{ env.aws_region }}" >> $GITHUB_OUTPUT
-          echo "k8s_cluster_name::${{ env.k8s_cluster_name }}" >> $GITHUB_OUTPUT
-          echo "app_name::${{ env.app_name }}" >> $GITHUB_OUTPUT
-          echo "dockerfile_path::${{ env.dockerfile_path }}" >> $GITHUB_OUTPUT
+          echo "image_name=${{ env.image_name }}" >> $GITHUB_OUTPUT
+          echo "registry=${{ env.registry }}" >> $GITHUB_OUTPUT
+          echo "aws_region=${{ env.aws_region }}" >> $GITHUB_OUTPUT
+          echo "k8s_cluster_name=${{ env.k8s_cluster_name }}" >> $GITHUB_OUTPUT
+          echo "app_name=${{ env.app_name }}" >> $GITHUB_OUTPUT
+          echo "dockerfile_path=${{ env.dockerfile_path }}" >> $GITHUB_OUTPUT
