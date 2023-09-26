@@ -55,16 +55,16 @@ jobs:
         id: setvars
         run: |
           if [[ "${{ inputs.base_ref }}" == "${{ env.prod_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.prod_branch }}" ]]; then
-            echo "::set-output name=k8s_namespace::production"
-            echo "::set-output name=ci_env::PROD"
+            echo "k8s_namespace=production" >> $GITHUB_OUTPUT
+            echo "ci_env=PROD" >> $GITHUB_OUTPUT
           fi
           if [[ "${{ inputs.base_ref }}" == "${{ env.dev_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.dev_branch }}" ]]; then
-            echo "::set-output name=k8s_namespace::test"
-            echo "::set-output name=ci_env::DEV"
+            echo "k8s_namespace=test" >> $GITHUB_OUTPUT
+            echo "ci_env=DEV" >> $GITHUB_OUTPUT
           fi
-          echo "::set-output name=image_name::${{ env.image_name }}"
-          echo "::set-output name=registry::${{ env.registry }}"
-          echo "::set-output name=aws_region::${{ env.aws_region }}"
-          echo "::set-output name=k8s_cluster_name::${{ env.k8s_cluster_name }}"
-          echo "::set-output name=dockerfile_path::${{ env.dockerfile_path }}"
-          echo "::set-output name=app_name::${{ env.app_name }}"
+          echo "image_name=${{ env.image_name }}" >> $GITHUB_OUTPUT
+          echo "registry=${{ env.registry }}" >> $GITHUB_OUTPUT
+          echo "aws_region=${{ env.aws_region }}" >> $GITHUB_OUTPUT
+          echo "k8s_cluster_name=${{ env.k8s_cluster_name }}" >> $GITHUB_OUTPUT
+          echo "app_name=${{ env.app_name }}" >> $GITHUB_OUTPUT
+          echo "dockerfile_path=${{ env.dockerfile_path }}" >> $GITHUB_OUTPUT
