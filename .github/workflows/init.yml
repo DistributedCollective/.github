@@ -40,7 +40,7 @@ jobs:
       dockerfile_path: ${{ steps.setvars.outputs.dockerfile_path }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.1.0
 
       - name: Read repo properties
         shell: bash
