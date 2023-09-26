@@ -48,7 +48,7 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # optional
 
       - name: use awscli 
-        uses: unfor19/install-aws-cli-action@master
+        uses: unfor19/install-aws-cli-action@46282f151073130d90347412d9c4ef0640177f22
         with:
           version: 2
       
@@ -79,7 +79,7 @@ jobs:
           echo "${{ steps.genparams.outputs.k8sparams }}"
 
       - name: Create kubernetes secret with service parameters
-        uses: kodermax/kubectl-aws-eks@master
+        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           KUBECTL_VERSION: "v1.22.0"
@@ -93,7 +93,7 @@ jobs:
             sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' deployment.yaml
 
       - name: kubernets apply config
-        uses: kodermax/kubectl-aws-eks@master
+        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           KUBECTL_VERSION: "v1.22.0"
@@ -102,7 +102,7 @@ jobs:
           args: apply -f deployment.yaml -n ${{ inputs.KUBE_NAMESPACE }}
 
       - name: rollout
-        uses: kodermax/kubectl-aws-eks@master
+        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           KUBECTL_VERSION: "v1.22.0"
