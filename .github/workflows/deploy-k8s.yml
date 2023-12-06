@@ -79,7 +79,7 @@ jobs:
           echo "${{ steps.genparams.outputs.k8sparams }}"
 
       - name: Create kubernetes secret with service parameters
-        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
+        uses: kodermax/kubectl-aws-eks@7e223308593f74c42b45782d230783715e131d51
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           KUBECTL_VERSION: "v1.22.0"
@@ -93,7 +93,7 @@ jobs:
             sed -i 's|image: ${{ inputs.IMAGE_NAME }}|image: ${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' deployment.yaml
 
       - name: kubernets apply config
-        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
+        uses: kodermax/kubectl-aws-eks@7e223308593f74c42b45782d230783715e131d51
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           KUBECTL_VERSION: "v1.22.0"
@@ -102,7 +102,7 @@ jobs:
           args: apply -f deployment.yaml -n ${{ inputs.KUBE_NAMESPACE }}
 
       - name: rollout
-        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
+        uses: kodermax/kubectl-aws-eks@7e223308593f74c42b45782d230783715e131d51
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
           KUBECTL_VERSION: "v1.22.0"
