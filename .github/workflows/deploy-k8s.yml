@@ -109,3 +109,12 @@ jobs:
           IAM_VERSION: "0.5.6"
         with:
           args: rollout restart deploy/${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }}
+      
+      - name: try to apply ingress
+        uses: kodermax/kubectl-aws-eks@7e223308593f74c42b45782d230783715e131d51
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: apply -f ingress.yaml -n ${{ inputs.KUBE_NAMESPACE }} || true
