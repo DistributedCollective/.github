@@ -109,8 +109,13 @@ jobs:
           IAM_VERSION: "0.5.6"
         with:
           args: rollout restart deploy/${{ inputs.app_name }} -n ${{ inputs.KUBE_NAMESPACE }}
+
+      - name: Template ingress (optional)
+        shell: bash
+        run: |
+            sed -i "s|host: ingress.hostname|host: $(cat .github/workflows/ci-properties.json | jq -r .${{ inputs.ci_env }}_ENV_VARS.INGRESS_HOSTNAME)|" ingress.yaml || true
       
-      - name: try to apply ingress
+      - name: apply ingress (optional)
         uses: kodermax/kubectl-aws-eks@7e223308593f74c42b45782d230783715e131d51
         env:
           KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
