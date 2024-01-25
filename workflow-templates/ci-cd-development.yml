@@ -23,6 +23,24 @@ jobs:
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  call-workflow-k8s-migration:
+    needs: [call-workflow-init, call-workflow-docker-build]
+    if: github.event_name != 'pull_request'
+    uses: DistributedCollective/.github/.github/workflows/migration-k8s.yml@master # in case additional secrets is needed, this file must be changed and pushed to your repository
+    with:
+      IMAGE_NAME: ${{ needs.call-workflow-init.outputs.image_name }}
+      KUBE_NAMESPACE: ${{ needs.call-workflow-init.outputs.KUBE_NAMESPACE }}
+      aws_region: ${{ needs.call-workflow-init.outputs.aws_region }}
+      k8s_cluster_name: ${{ needs.call-workflow-init.outputs.k8s_cluster_name }}
+      app_name: ${{ needs.call-workflow-init.outputs.app_name }}
+      event_name: ${{ github.event_name }}
+      registry: ${{ needs.call-workflow-init.outputs.registry }}
+      dockerfile_path:  ${{ needs.call-workflow-init.outputs.dockerfile_path }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }} # optional
+      # addional secrets must me defined here
   call-workflow-k8s-deploy:
     needs: [call-workflow-init, call-workflow-docker-build]
     if: github.event_name != 'pull_request'
@@ -30,6 +48,7 @@ jobs:
     with:
       IMAGE_NAME: ${{ needs.call-workflow-init.outputs.image_name }}
       KUBE_NAMESPACE: ${{ needs.call-workflow-init.outputs.KUBE_NAMESPACE }}
+      ci_env: ${{ needs.call-workflow-init.outputs.ci_env }}
       aws_region: ${{ needs.call-workflow-init.outputs.aws_region }}
       k8s_cluster_name: ${{ needs.call-workflow-init.outputs.k8s_cluster_name }}
       app_name: ${{ needs.call-workflow-init.outputs.app_name }}

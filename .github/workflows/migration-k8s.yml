@@ -1,0 +1,115 @@
+on:
+  workflow_call:
+    inputs:
+      IMAGE_NAME:
+        required: true
+        type: string
+      KUBE_NAMESPACE:
+        required: true
+        type: string
+      event_name:
+        required: true
+        type: string
+      dockerfile_path:
+        required: true
+        type: string
+      registry:
+        required: true
+        type: string
+      aws_region:
+        required: true
+        type: string
+      k8s_cluster_name:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_SESSION_TOKEN:
+        required: false
+      
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.0
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws_region }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # optional
+
+      - name: Login to registry ${{ inputs.registry }}
+        if: inputs.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ inputs.registry }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ${{ inputs.dockerfile_path }}/Dockerfile-dev
+          push: ${{ inputs.event_name != 'pull_request' }}
+          tags: ${{ inputs.registry }}/${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}Migration
+
+      - name: use awscli 
+        uses: unfor19/install-aws-cli-action@master
+        with:
+          version: 2
+      
+      - run: aws --version 
+        shell: bash
+
+      - name: login to EKS
+        id: kubeconfig
+        run: | 
+          echo "::add-mask::$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)"
+          echo "KUBECONFIG=$(aws eks --region ${{ inputs.aws_region }} update-kubeconfig --name ${{ inputs.k8s_cluster_name }} --dry-run | base64 -w 0)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Generate k8s secret params
+        shell: bash
+        run: |
+            sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}Migration|' migration.yaml
+
+      - name: kubernets run migration
+        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: apply -f migration.yaml -n ${{ inputs.KUBE_NAMESPACE }}
+
+      - name: kubernets wair for migration to end
+        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: wait --for=condition=complete job/${{ inputs.app_name }}-migration -n ${{ inputs.KUBE_NAMESPACE }}
+
+      - name: kubernets wair for migration to end
+        uses: kodermax/kubectl-aws-eks@214195db51c87cdd4d7c1e33e43f7638b5849186
+        env:
+          KUBE_CONFIG_DATA: ${{ steps.kubeconfig.outputs.KUBECONFIG }}
+          KUBECTL_VERSION: "v1.22.0"
+          IAM_VERSION: "0.5.6"
+        with:
+          args: delete job ${{ inputs.app_name }}-migration -n ${{ inputs.KUBE_NAMESPACE }}

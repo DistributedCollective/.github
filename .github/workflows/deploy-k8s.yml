@@ -90,7 +90,7 @@ jobs:
       - name: Generate k8s secret params
         shell: bash
         run: |
-            sed -i 's|image: ${{ inputs.IMAGE_NAME }}|image: ${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' deployment.yaml
+            sed -i 's|${{ inputs.IMAGE_NAME }}|${{ inputs.IMAGE_NAME }}:${{ inputs.KUBE_NAMESPACE }}|' deployment.yaml
 
       - name: kubernets apply config
         uses: kodermax/kubectl-aws-eks@7e223308593f74c42b45782d230783715e131d51
