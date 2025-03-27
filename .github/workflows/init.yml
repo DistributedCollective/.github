@@ -62,6 +62,10 @@ jobs:
             echo "k8s_namespace=test" >> $GITHUB_OUTPUT
             echo "ci_env=DEV" >> $GITHUB_OUTPUT
           fi
+          if [[ "${{ inputs.base_ref }}" == "${{ env.staging_branch }}" || "${{ inputs.ref }}" == "refs/heads/${{ env.staging_branch }}" ]]; then
+            echo "k8s_namespace=test" >> $GITHUB_OUTPUT
+            echo "ci_env=STAGING" >> $GITHUB_OUTPUT
+          fi
           echo "image_name=${{ env.image_name }}" >> $GITHUB_OUTPUT
           echo "registry=${{ env.registry }}" >> $GITHUB_OUTPUT
           echo "aws_region=${{ env.aws_region }}" >> $GITHUB_OUTPUT
